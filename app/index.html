@@ -7,7 +7,7 @@
 </head>
 <body ng-app="MainApp">
 
-    <a ng-click="emitState('index')">HOME</a> <a ng-click="emitState('index.questions')">QUESTIONS</a>
+    <a ng-click="emitState('index')">HOME</a> <a ng-click="emitState('index.polls')">POLLS</a>
     <div ui-view></div>
 
 
@@ -15,10 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.min.js"></script>
     <script src="//cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
     <script src="{{static_url('js/app.js')}}"></script>
-    <script src="{{static_url('js/index/controller/indexController.js')}}"></script>
-    <script src="{{static_url('js/users/controller/usersController.js')}}"></script>
-    <script src="{{static_url('js/login/controller/loginController.js')}}"></script>
-    <script src="{{static_url('js/index/model/questionModel.js')}}"></script>
+    <script src="{{static_url('js/polls/controller/pollsController.js')}}"></script>
+    <script src="{{static_url('js/polls/model/pollsModel.js')}}"></script>
     <script src="{{static_url('js/index/service/socketService.js')}}"></script>
 </body>
 </html>

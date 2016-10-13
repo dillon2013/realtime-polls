@@ -1,4 +1,4 @@
-angular.module('MainApp').factory('questionsModel', function () {
+angular.module('MainApp').factory('pollsModel', function () {
     return [
         {
             question : 'What is the Arsenal football stadium capacity?',

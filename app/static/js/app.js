@@ -19,22 +19,26 @@ angular.module('MainApp').config(function($interpolateProvider, $stateProvider, 
     // HOME STATES AND NESTED VIEWS ========================================
     .state('index', {
         url: '/',
-        controller: 'indexCtrl',
+        //controller: 'indexCtrl',
         templateUrl : 'static/js/index/template/indexTemplate.html'
     })
 
     // ABOUT PAGE AND MULTIPLE NAMED VIEWS =================================
-    .state('index.questions', {
-        url: 'questions',
-        templateUrl : 'static/js/index/template/questionsTemplate.html'
+    .state('index.polls', {
+        url: 'polls',
+        controller: 'pollsController',
+        templateUrl : 'static/js/polls/template/pollsTemplate.html'
     });
 
     $locationProvider.html5Mode(true);
 
 })
 
-.run(function ($state,$rootScope,SocketService) {
+.run(function ($state,$rootScope, $timeout,SocketService) {
+
     $rootScope.$state = $state;
+    $rootScope.questionIndex = 0;
+
     $rootScope.emitState = function (state) {
         SocketService.sock.sendMessage({
             event : 'stateChange',
@@ -43,7 +47,17 @@ angular.module('MainApp').config(function($interpolateProvider, $stateProvider, 
         })
     };
 
-    //$rootscope.$on('clientInit', function (event, data) {
-    //    if(data.state)
-    //});
+    $rootScope.$on('clientInit', function (event, data) {
+        $timeout(function (){
+            $rootScope.questionIndex = data.questionIndex;
+        });
+
+        if(data.state !== $state.current.name){
+            $state.go(data.state)
+        }
+    });
+
+    $rootScope.$on('stateChange', function (event, data) {
+        $state.go(data.newState);
+    });
 });
