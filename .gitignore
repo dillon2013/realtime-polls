@@ -1,0 +1,9 @@
+.idea
+lib
+lib64
+include
+pip-selfcheck.json
+testTornado.iml
+.pycharmrc
+pyvenv.cfg
+bin

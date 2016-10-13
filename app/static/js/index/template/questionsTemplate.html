@@ -1,0 +1,19 @@
+<div>
+    <h2>{$questions[questionIndex].question$}</h2>
+
+    <ul>
+        <li ng-repeat="answer in questions[questionIndex].answers">
+            {$answer.answer$} <input type="radio" ng-click="selectAnswer($index)" name="question{$questionIndex + 1$}">
+            {$answer.selected$}
+        </li>
+    </ul>
+
+    <footer>
+        <div class="controls">
+            <a href="" class="left" ng-click="clickPrevious()"><</a>
+            <a href="" class="right" ng-click="clickNext()">></a>
+        </div>
+
+        <button ng-click="submitAnswer(questionIndex, answerIndex)">Submit</button>
+    </footer>
+</div>
