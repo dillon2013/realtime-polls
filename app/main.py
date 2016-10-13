@@ -5,6 +5,11 @@ import routes
 import tornado.log
 import sockjs.tornado
 import pprint
+import motor.motor_tornado
+
+client = motor.motor_tornado.MotorClient('localhost', 27017)
+db = client['polls']
+
 
 tornado.log.enable_pretty_logging()
 
@@ -14,6 +19,7 @@ settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
     "static_hash_cache" : False,
     "compiled_template_cache" : False,
+    "db" : db,
 }
 ChatRouter = sockjs.tornado.SockJSRouter(routes.ChatConnection, '/ws')
 

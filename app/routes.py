@@ -4,12 +4,11 @@ import pprint
 import sockjs.tornado
 import json
 
-global questionIndex
-
 
 class Home(tornado.web.RequestHandler):
 
     def get(self):
+        pprint.pprint(dir(self.settings['db']))
         # pprint.pprint(self.__dict__)
         # pprint.pprint(dir(self))
         # self.set_header('firstname', 'dillons')
@@ -36,7 +35,13 @@ class ChatConnection(sockjs.tornado.SockJSConnection):
     numOfQuestions = 2
     state = 'index'
 
+    def __initdb(self):
+        print ('got data back mayyyyn!')
+
     def on_open(self, info):
+        # pprint.pprint(dir(self.settings['db']))
+        # db.state.find({questionIndex:0}, callback=__initdb)
+
         # Send existing clients message that someone joined
         clientJoinedData = {
             'event' : 'serverMessage',
