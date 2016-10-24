@@ -40,6 +40,7 @@ angular.module('MainApp').config(function($interpolateProvider, $stateProvider, 
     $rootScope.questionIndex = 0;
 
     $rootScope.emitState = function (state) {
+        console.log('state emmiting', state);
         SocketService.sock.sendMessage({
             event : 'stateChange',
             previousState : $state.current.name,
@@ -48,6 +49,8 @@ angular.module('MainApp').config(function($interpolateProvider, $stateProvider, 
     };
 
     $rootScope.$on('clientInit', function (event, data) {
+        console.log(data);
+        console.log('yo homie!');
         $timeout(function (){
             $rootScope.questionIndex = data.questionIndex;
         });
@@ -58,6 +61,7 @@ angular.module('MainApp').config(function($interpolateProvider, $stateProvider, 
     });
 
     $rootScope.$on('stateChange', function (event, data) {
+        console.log('state change homie');
         $state.go(data.newState);
     });
 });

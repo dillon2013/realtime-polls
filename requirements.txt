@@ -1,5 +1,8 @@
+easydict==1.6
 greenlet==0.4.10
-motor==0.6.2
-pymongo==2.8
+motor==0.2
+motorengine==0.9.0
+pymongo==2.7
+six==1.10.0
 sockjs-tornado==1.0.3
-tornado==4.4.1
+tornado==4.4.2

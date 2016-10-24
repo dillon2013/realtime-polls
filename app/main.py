@@ -4,11 +4,9 @@ import os
 import routes
 import tornado.log
 import sockjs.tornado
-import pprint
-import motor.motor_tornado
+from motorengine import connect
+from tornado import gen
 
-client = motor.motor_tornado.MotorClient('localhost', 27017)
-db = client['polls']
 
 
 tornado.log.enable_pretty_logging()
@@ -18,8 +16,7 @@ settings = {
     "autoreload" : True,
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
     "static_hash_cache" : False,
-    "compiled_template_cache" : False,
-    "db" : db,
+    "compiled_template_cache" : False
 }
 ChatRouter = sockjs.tornado.SockJSRouter(routes.ChatConnection, '/ws')
 
@@ -30,7 +27,13 @@ def make_app():
     ] + ChatRouter.urls, **settings)
 
 if __name__ == "__main__":
+
     print('server listening on port ' + str(port))
     app = make_app()
     app.listen(port)
-    tornado.ioloop.IOLoop.instance().start()
+    io_loop = tornado.ioloop.IOLoop.instance()
+    connect("polls", host="localhost", port=27017, io_loop=io_loop)
+    io_loop.start()
+
+
+
