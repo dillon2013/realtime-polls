@@ -1,16 +1,23 @@
+from tornado import gen
 
-
-def nextQuestion (instance=None, messsage=None, db=None):
+@gen.coroutine
+def nextQuestion (con,appState,msg=None):
     print('next question')
 
-def previousQuestion (instance=None, messsage=None, db=None):
+@gen.coroutine
+def previousQuestion (con,appState,msg=None):
     print('previous question')
 
-def statechange (instance=None, messsage=None, db=None):
-    print('state change')
+@gen.coroutine
+def stateChange (con,appstate,msg=None):
+    appstate.state = msg['newState']
+    yield appstate.save()
+    con.broadcast(con.participants, msg)
 
+@gen.coroutine
 def closeSocket(self):
-    # Remove client from the clients list and broadcast leave message
-    self.participants.remove(self)
-    data = {'event' : 'serverMessage', 'data' : '{} has left'.format(self.session.session_id)}
-    self.broadcast(self.participants, data)
+    # # Remove client from the clients list and broadcast leave message
+    # self.participants.remove(self)
+    # data = {'event' : 'serverMessage', 'data' : '{} has left'.format(self.session.session_id)}
+    # self.broadcast(self.participants, data)
+    pass

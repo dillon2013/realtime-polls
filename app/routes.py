@@ -23,15 +23,17 @@ class ChatConnection(sockjs.tornado.SockJSConnection):
     participants = set()
 
     @staticmethod
-    def handle_all_users(result):
-        print('found all users')
+    def __initEvent(con,appstate,msg=None):
+        for event in dir(SocketEvents):
+            if event == msg['event']:
+                getattr(SocketEvents, event)(con, appstate, msg)
+
 
     @gen.coroutine
     def on_open(self, info):
 
+
         appState = yield State.objects.get('580e67ba61d3661b3953ebba')
-        # appState = data[0]
-        print(appState)
 
         # # Send existing clients message that someone joined
         clientJoinedData = {
@@ -50,46 +52,42 @@ class ChatConnection(sockjs.tornado.SockJSConnection):
         self.broadcast([self], msg)
         # #
         # # # yield mongo_db.db.state.update({},{'$push':{'participants':self.session.session_id}})
-        # # self.participants.add(self)
+        self.participants.add(self)
 
     @gen.coroutine
     def on_message(self, message):
         msg = json.loads(message)
-        # pprint.pprint(dir(self))
+        appState = yield State.objects.get('580e67ba61d3661b3953ebba')
+        self.__initEvent(self, appState, msg)
 
 
-
-
-        if msg['event'] == 'nextQuestion':
-            pass
-            # SocketEvents.nextQuestion()
-
-            # questionIndex =  yield mongo_db.db.state.find({{}:{'questionIndex':1}})
-
-            # if msg['questionIndex'] + 1 < ChatConnection.numOfQuestions:
-            #     msg['previousQuestion'] = questionIndex
-            #     questionIndex += 1
-            #     msg['questionIndex'] = questionIndex
-            #     yield mongo_db.db.state.update({},{'$inc':{'questionIndex':1}})
-            #     self.broadcast(self.participants, msg)
-
-        elif msg['event'] == 'previousQuestion':
-            SocketEvents.previousQuestion()
-            # if msg['questionIndex']  > 0:
-            #     msg['previousQuestion'] = ChatConnection.questionIndex
-            #     ChatConnection.questionIndex -= 1
-            #     msg['questionIndex'] = ChatConnection.questionIndex
-            #     self.broadcast(self.participants, msg)
-
-        elif msg['event'] == 'stateChange':
-            SocketEvents.statechange()
-            ChatConnection.state = msg['newState']
-
-            # pprint.pprint(msg)
-            self.broadcast(self.participants, msg)
-
-        else:
-            self.broadcast(self.participants, msg)
+        # if msg['event'] == 'nextQuestion':
+        #
+        #
+        #     if msg['questionIndex'] + 1 < appState.numberOfQuestions:
+        #         msg['previousQuestion'] = appState.questionIndex
+        #         appState.questionIndex += 1
+        #         msg['questionIndex'] = appState.questionIndex
+        #         yield appState.save()
+        #         self.broadcast(self.participants, msg)
+        #
+        # elif msg['event'] == 'previousQuestion':
+        #     SocketEvents.previousQuestion()
+        #     if msg['questionIndex']  > 0:
+        #         msg['previousQuestion'] = appState.questionIndex
+        #         appState.questionIndex -= 1
+        #         msg['questionIndex'] = appState.questionIndex
+        #         yield appState.save()
+        #         self.broadcast(self.participants, msg)
+        #
+        # elif msg['event'] == 'stateChange':
+        #     appState = yield State.objects.get('580e67ba61d3661b3953ebba')
+        #     appState.state = msg['newState']
+        #     yield appState.save()
+        #     self.broadcast(self.participants, msg)
+        #
+        # else:
+        #     self.broadcast(self.participants, msg)
 
 
     def on_close(self):

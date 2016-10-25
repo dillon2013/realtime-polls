@@ -5,7 +5,6 @@ import routes
 import tornado.log
 import sockjs.tornado
 from motorengine import connect
-from tornado import gen
 
 
 
