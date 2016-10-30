@@ -6,16 +6,14 @@ import tornado.log
 import sockjs.tornado
 from motorengine import connect
 
-
-
 tornado.log.enable_pretty_logging()
 
 port = 8888
 settings = {
-    "autoreload" : True,
+    "autoreload": True,
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
-    "static_hash_cache" : False,
-    "compiled_template_cache" : False
+    "static_hash_cache": False,
+    "compiled_template_cache": False
 }
 ChatRouter = sockjs.tornado.SockJSRouter(routes.ChatConnection, '/ws')
 

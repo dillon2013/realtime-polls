@@ -5,7 +5,7 @@ import pprint
 import sockjs.tornado
 import json
 from  mongo_db import State
-import SocketEvents
+import socketEvents
 
 
 class Home(tornado.web.RequestHandler):
@@ -19,30 +19,22 @@ class Users(tornado.web.RequestHandler):
 
 class ChatConnection(sockjs.tornado.SockJSConnection):
     """Chat connection implementation"""
-    # Class level variable
     participants = set()
 
-    @staticmethod
-    def __initEvent(con,appstate,msg=None):
-        for event in dir(SocketEvents):
-            if event == msg['event']:
-                getattr(SocketEvents, event)(con, appstate, msg)
-
+    def __initEvent(self,appstate,msg=None):
+        event = getattr(socketEvents, msg['event'])
+        event(self, appstate, msg)
 
     @gen.coroutine
     def on_open(self, info):
-
-
         appState = yield State.objects.get('580e67ba61d3661b3953ebba')
 
-        # # Send existing clients message that someone joined
         clientJoinedData = {
             'event' : 'serverMessage',
             'message' : '{} has joined'.format(self.session.session_id),
         }
         self.broadcast(self.participants, clientJoinedData)
 
-        # Send new client the state of application
         msg = {
             'event' : 'clientInit',
             'questionIndex' : appState.questionIndex,
@@ -50,51 +42,18 @@ class ChatConnection(sockjs.tornado.SockJSConnection):
             'state' : appState.state
         }
         self.broadcast([self], msg)
-        # #
-        # # # yield mongo_db.db.state.update({},{'$push':{'participants':self.session.session_id}})
         self.participants.add(self)
 
     @gen.coroutine
     def on_message(self, message):
         msg = json.loads(message)
         appState = yield State.objects.get('580e67ba61d3661b3953ebba')
-        self.__initEvent(self, appState, msg)
-
-
-        # if msg['event'] == 'nextQuestion':
-        #
-        #
-        #     if msg['questionIndex'] + 1 < appState.numberOfQuestions:
-        #         msg['previousQuestion'] = appState.questionIndex
-        #         appState.questionIndex += 1
-        #         msg['questionIndex'] = appState.questionIndex
-        #         yield appState.save()
-        #         self.broadcast(self.participants, msg)
-        #
-        # elif msg['event'] == 'previousQuestion':
-        #     SocketEvents.previousQuestion()
-        #     if msg['questionIndex']  > 0:
-        #         msg['previousQuestion'] = appState.questionIndex
-        #         appState.questionIndex -= 1
-        #         msg['questionIndex'] = appState.questionIndex
-        #         yield appState.save()
-        #         self.broadcast(self.participants, msg)
-        #
-        # elif msg['event'] == 'stateChange':
-        #     appState = yield State.objects.get('580e67ba61d3661b3953ebba')
-        #     appState.state = msg['newState']
-        #     yield appState.save()
-        #     self.broadcast(self.participants, msg)
-        #
-        # else:
-        #     self.broadcast(self.participants, msg)
-
+        self.__initEvent(appState, msg)
 
     def on_close(self):
-        SocketEvents.closeSocket(self)
-        # mongo_db.db.state.update({},{'$pull':{'participants':self.session.session_id}})
-        # # Remove client from the clients list and broadcast leave message
         self.participants.remove(self)
-        # data = {'event' : 'serverMessage', 'data' : '{} has left'.format(self.session.session_id)}
+        data = {'event': 'serverMessage', 'data': '{} has left'.format(self.session.session_id)}
         self.broadcast(self.participants, data)
+
+
 
