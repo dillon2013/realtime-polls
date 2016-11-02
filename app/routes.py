@@ -1,23 +1,18 @@
-import tornado.web
-import tornado.websocket
+from  tornado.web import RequestHandler
 from tornado import gen
-import pprint
-import sockjs.tornado
+from sockjs.tornado import SockJSConnection
 import json
 from  mongo_db import State
 import socketEvents
 
 
-class Home(tornado.web.RequestHandler):
+class Home(RequestHandler):
 
     def get(self):
         self.render('index.html')
 
-class Users(tornado.web.RequestHandler):
-    def get(self):
-        pass
 
-class ChatConnection(sockjs.tornado.SockJSConnection):
+class ChatConnection(SockJSConnection):
     """Chat connection implementation"""
     participants = set()
 
@@ -48,6 +43,7 @@ class ChatConnection(sockjs.tornado.SockJSConnection):
     def on_message(self, message):
         msg = json.loads(message)
         appState = yield State.objects.get('580e67ba61d3661b3953ebba')
+
         self.__initEvent(appState, msg)
 
     def on_close(self):

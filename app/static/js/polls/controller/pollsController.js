@@ -21,7 +21,7 @@ angular.module('MainApp').controller('pollsController',
 
         function assignIndex(event, data) {
             $timeout(function (){
-                $scope.questionIndex = data.questionIndex;
+                $rootScope.questionIndex = data.questionIndex;
             });
         }
 

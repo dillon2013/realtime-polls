@@ -19,7 +19,6 @@ ChatRouter = sockjs.tornado.SockJSRouter(routes.ChatConnection, '/ws')
 
 def make_app():
     return tornado.web.Application([
-        (r"/api/users", routes.Users),
         (r"/?\w*", routes.Home)
     ] + ChatRouter.urls, **settings)
 

@@ -63,5 +63,6 @@ angular.module('MainApp').config(function($interpolateProvider, $stateProvider, 
     $rootScope.$on('stateChange', function (event, data) {
         console.log('state change homie');
         $state.go(data.newState);
+        console.log('question index!',$rootScope.questionIndex);
     });
 });
